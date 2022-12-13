@@ -1,24 +1,44 @@
 import '../styles/Cart.css'
+import { useState, useEffect } from 'react'
 
-const Cart = () => {
-    const plant0 = "Monstera"
-    const price0 = 8
-    const plant1 = "Lierre"
-    const price1 = 10
-    const plant2 = "Bouquet de fleurs"
-    const price2 = 15
-    const totalPrice = price0 + price1 + price2
-    
-    return (<div className='lmj-cart'>
+const Cart = ({cart, updateCart}) => {
+    const monsteraPrice = 8
+    const [isOpen, setIsOpen] = useState(0)
+    const total = cart.reduce((acc, plantType) => acc + plantType.amount * plantType.price, 0)
+
+    useEffect(() => {
+        document.title = `LMJ: ${total}€ d'achats`
+    }, [total])
+
+    return isOpen ? (
+        <div className='lmj-cart'>
+            <button 
+                className='lmj-cart-toggle-button'
+                onClick={() => {setIsOpen(false)}}
+            >
+                    Fermer le Panier
+            </button>
             <h2>Panier</h2>
             <ul>
-                <li> {plant0 + " " + price0 + "€"} </li>
-                <li> {plant1 + " " + price1 + "€"} </li>
-                <li> {plant2 + " " + price2 + "€"} </li>
-                <li> {"Prix total : " + totalPrice} </li>
+                {cart.map(({ name, price, amount}, index) => (
+                    <div key={`${name}-${index}`}>
+                        {name} {price}€ x {amount}
+                    </div>
+                ))}
             </ul>
+            <h3>Total: {total}€</h3>
+            <button onClick={() => {updateCart([])}}>Vider le Panier</button>
         </div>
-    )
-  }
+        ) : (
+        <div className='lmj-cart-closed'>
+            <button 
+                className='lmj-cart-toggle-button'
+                onClick={() => {setIsOpen(true)}}
+            >
+                Ouvrir le Panier
+            </button>
+        </div>
+        )
+    }
 
   export default Cart
